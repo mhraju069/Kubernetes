@@ -330,14 +330,21 @@ kubectl apply -f deployment.yml -n nginx
 
 ## Delete Deployment
 
+Delete deployment with Deployment Name:
+
 ```bash
 kubectl delete deployment <deployment-name> -n <namespace>
 ```
 
 Example:
-
 ```bash
 kubectl delete deployment nginx-deployment -n nginx
+```
+
+Delete by YAML file:
+
+```bash
+kubectl delete -f deployment.yml -n nginx
 ```
 
 ## List Deployments
@@ -487,6 +494,26 @@ Example:
 
 ```bash
 kubectl get rs -n nginx
+```
+
+## Delete ReplicaSet
+
+Delete by ReplicaSet Name:
+
+```bash
+kubectl delete rs <rs-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl delete rs replicaset-nginx -n nginx
+```
+
+Delete by YAML file:
+
+```bash
+kubectl delete -f replicaset.yml -n nginx
 ```
 
 ---
