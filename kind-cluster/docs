@@ -1,8 +1,0 @@
-#run
-kind create cluster --name mycluster --config=config.yml
-
-#check
-kubectl cluster-info --context kind-mycluster
-
-#get-nodes
-kubectl get nodes --context kind-mycluster
