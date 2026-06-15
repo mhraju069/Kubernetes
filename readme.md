@@ -1,15 +1,19 @@
 # Kubernetes Kind Cluster Setup Guide
 
-This guide covers:
+A beginner-friendly guide for setting up a local Kubernetes cluster using Kind (Kubernetes IN Docker) and managing Kubernetes resources with `kubectl`.
 
-* Installing Docker
-* Installing kubectl
-* Installing Kind (Kubernetes IN Docker)
-* Creating a Kubernetes cluster
-* Managing namespaces
-* Managing Pods
-* Managing Deployments
-* Scaling Deployments
+## What You'll Learn
+
+* Install Docker
+* Install kubectl
+* Install Kind
+* Create and delete Kubernetes clusters
+* Manage namespaces
+* Create and manage Pods
+* Create and manage Deployments
+* Scale Deployments
+* Perform rolling updates and rollbacks
+* Inspect and troubleshoot resources
 
 ---
 
@@ -35,21 +39,21 @@ Install Docker:
 sudo apt install -y docker.io
 ```
 
-Enable and start Docker service:
+Enable and start Docker:
 
 ```bash
 sudo systemctl enable docker
 sudo systemctl start docker
 ```
 
-Add current user to Docker group:
+Add your user to the Docker group:
 
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-Verify Docker installation:
+Verify installation:
 
 ```bash
 docker --version
@@ -72,7 +76,7 @@ Make it executable:
 chmod +x kubectl
 ```
 
-Move to system path:
+Move it to your PATH:
 
 ```bash
 sudo mv kubectl /usr/local/bin/
@@ -100,7 +104,7 @@ Make it executable:
 chmod +x ./kind
 ```
 
-Move to system path:
+Move it to your PATH:
 
 ```bash
 sudo mv ./kind /usr/local/bin/kind
@@ -119,19 +123,49 @@ kind version
 Create a cluster using a configuration file:
 
 ```bash
+kind create cluster --name <cluster-name> --config=config.yml
+```
+
+Example:
+
+```bash
 kind create cluster --name mycluster --config=config.yml
 ```
 
 Verify cluster:
 
 ```bash
+kubectl cluster-info --context kind-<cluster-name>
+```
+
+Example:
+
+```bash
 kubectl cluster-info --context kind-mycluster
 ```
 
-View cluster nodes:
+View nodes:
+
+```bash
+kubectl get nodes --context kind-<cluster-name>
+```
+
+Example:
 
 ```bash
 kubectl get nodes --context kind-mycluster
+```
+
+Delete cluster:
+
+```bash
+kind delete cluster --name <cluster-name>
+```
+
+Example:
+
+```bash
+kind delete cluster --name mycluster
 ```
 
 ---
@@ -141,16 +175,34 @@ kubectl get nodes --context kind-mycluster
 ## Create Namespace
 
 ```bash
+kubectl create namespace <namespace>
+```
+
+Example:
+
+```bash
 kubectl create namespace nginx
 ```
 
 ## Delete Namespace
 
 ```bash
+kubectl delete namespace <namespace>
+```
+
+Example:
+
+```bash
 kubectl delete namespace nginx
 ```
 
 ## List Namespaces
+
+```bash
+kubectl get namespaces
+```
+
+or
 
 ```bash
 kubectl get ns
@@ -160,7 +212,16 @@ kubectl get ns
 
 # 6. Pod Management
 
-## Create Pod (Command)
+## Create Pod (CLI)
+
+```bash
+kubectl run <pod-name> \
+  --image=<image-name> \
+  --restart=Never \
+  -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl run nginx-pod \
@@ -169,7 +230,13 @@ kubectl run nginx-pod \
   -n nginx
 ```
 
-## Create Pod (YAML File)
+## Create Pod (YAML)
+
+```bash
+kubectl apply -f pod.yml -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl apply -f pod.yml -n nginx
@@ -178,10 +245,22 @@ kubectl apply -f pod.yml -n nginx
 ## Delete Pod
 
 ```bash
+kubectl delete pod <pod-name> -n <namespace>
+```
+
+Example:
+
+```bash
 kubectl delete pod nginx-pod -n nginx
 ```
 
-## List Pods in Namespace
+## List Pods
+
+```bash
+kubectl get pods -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl get pods -n nginx
@@ -193,11 +272,43 @@ kubectl get pods -n nginx
 kubectl get pods --all-namespaces
 ```
 
+## Describe Pod
+
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl describe pod nginx-pod -n nginx
+```
+
+## View Pod Logs
+
+```bash
+kubectl logs <pod-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl logs nginx-pod -n nginx
+```
+
 ---
 
 # 7. Deployment Management
 
-## Create Deployment (Command)
+## Create Deployment (CLI)
+
+```bash
+kubectl create deployment <deployment-name> \
+  --image=<image-name> \
+  -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl create deployment nginx-deployment \
@@ -205,7 +316,13 @@ kubectl create deployment nginx-deployment \
   -n nginx
 ```
 
-## Create Deployment (YAML File)
+## Create Deployment (YAML)
+
+```bash
+kubectl apply -f deployment.yml -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl apply -f deployment.yml -n nginx
@@ -214,20 +331,52 @@ kubectl apply -f deployment.yml -n nginx
 ## Delete Deployment
 
 ```bash
+kubectl delete deployment <deployment-name> -n <namespace>
+```
+
+Example:
+
+```bash
 kubectl delete deployment nginx-deployment -n nginx
 ```
 
 ## List Deployments
 
 ```bash
+kubectl get deployments -n <namespace>
+```
+
+Example:
+
+```bash
 kubectl get deployments -n nginx
+```
+
+## Describe Deployment
+
+```bash
+kubectl describe deployment <deployment-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl describe deployment nginx-deployment -n nginx
 ```
 
 ---
 
-# 8. Scale Deployment
+# 8. Scaling Deployments
 
-## Scale Up to 3 Replicas
+## Scale Up
+
+```bash
+kubectl scale deployment <deployment-name> \
+  --replicas=<replica-count> \
+  -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl scale deployment nginx-deployment \
@@ -235,7 +384,7 @@ kubectl scale deployment nginx-deployment \
   -n nginx
 ```
 
-## Scale Down to 1 Replica
+## Scale Down
 
 ```bash
 kubectl scale deployment nginx-deployment \
@@ -243,44 +392,137 @@ kubectl scale deployment nginx-deployment \
   -n nginx
 ```
 
-Check running pods:
+Check Pods:
 
 ```bash
-kubectl get pods -n nginx
+kubectl get pods -n <namespace>
 ```
 
 ---
 
-# Useful Commands
+# 9. Rollout & Update Deployment
 
-## Get All Resources in Namespace
+## Update Container Image
+
+```bash
+kubectl set image deployment/<deployment-name> \
+  <container-name>=<new-image-name> \
+  -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl set image deployment/nginx-deployment \
+  nginx=nginx:1.27 \
+  -n nginx
+```
+
+---
+
+## Check Rollout Status
+
+```bash
+kubectl rollout status deployment/<deployment-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl rollout status deployment/nginx-deployment -n nginx
+```
+
+---
+
+## View Rollout History
+
+```bash
+kubectl rollout history deployment/<deployment-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl rollout history deployment/nginx-deployment -n nginx
+```
+
+---
+
+## Roll Back to Previous Version
+
+```bash
+kubectl rollout undo deployment/<deployment-name> -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl rollout undo deployment/nginx-deployment -n nginx
+```
+
+---
+
+## Roll Back to a Specific Revision
+
+```bash
+kubectl rollout undo deployment/<deployment-name> \
+  --to-revision=<revision-number> \
+  -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl rollout undo deployment/nginx-deployment \
+  --to-revision=2 \
+  -n nginx
+```
+
+---
+
+# 10. Useful Commands
+
+## Get All Resources in a Namespace
+
+```bash
+kubectl get all -n <namespace>
+```
+
+Example:
 
 ```bash
 kubectl get all -n nginx
 ```
 
-## Describe Pod
+## Get Detailed Resource Information
 
 ```bash
-kubectl describe pod nginx-pod -n nginx
+kubectl describe pod <pod-name> -n <namespace>
+kubectl describe deployment <deployment-name> -n <namespace>
 ```
 
-## Describe Deployment
+## Watch Resource Changes
 
 ```bash
-kubectl describe deployment nginx-deployment -n nginx
+kubectl get pods -n <namespace> -w
 ```
 
-## View Pod Logs
+## Show Pod IPs and Node Information
 
 ```bash
-kubectl logs nginx-pod -n nginx
+kubectl get pods -o wide -n <namespace>
 ```
 
-## Delete Cluster
+## Show Events
 
 ```bash
-kind delete cluster --name mycluster
+kubectl get events -n <namespace>
+```
+
+## Get YAML Definition of a Resource
+
+```bash
+kubectl get deployment <deployment-name> -n <namespace> -o yaml
 ```
 
 ---
@@ -302,6 +544,4 @@ kind delete cluster --name mycluster
 * https://kind.sigs.k8s.io/
 * https://kubernetes.io/docs/
 * https://docs.docker.com/
-
-```
-```
+* https://kubernetes.io/docs/tasks/
