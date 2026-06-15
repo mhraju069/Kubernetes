@@ -462,20 +462,31 @@ kubectl rollout undo deployment/nginx-deployment -n nginx
 
 ---
 
-## Roll Back to a Specific Revision
+# 10. ReplicaSet
+
+## Create a ReplicaSet
 
 ```bash
-kubectl rollout undo deployment/<deployment-name> \
-  --to-revision=<revision-number> \
-  -n <namespace>
+kubectl apply -f replicaset.yml -n <namespace>
 ```
 
 Example:
 
 ```bash
-kubectl rollout undo deployment/nginx-deployment \
-  --to-revision=2 \
-  -n nginx
+kubectl apply -f replicaset.yml -n nginx
+```
+
+
+## List ReplicaSet
+
+```bash
+kubectl get rs -n <namespace>
+```
+
+Example:
+
+```bash
+kubectl get rs -n nginx
 ```
 
 ---
