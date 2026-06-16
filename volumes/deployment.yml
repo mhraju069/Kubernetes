@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: test-deployment
+  # namespace: default
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: test-app
+
+  template:
+    metadata:
+      name: test-app-pod
+      labels:
+        app: test-app
+
+    spec:
+      containers:
+        - name: test-app
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: test-volume
+              mountPath: /raju/data
+
+      volumes:
+        - name: test-volume
+          persistentVolumeClaim:
+            claimName: local-pvc
