@@ -22,7 +22,7 @@ kubectl logs -f <pod-name> -n <namespace>
 
 # Pod on which node it is running
 ```bash
-kctl get pods -o wide
+kubectl get pods -o wide
 ```
 
 # Delete
