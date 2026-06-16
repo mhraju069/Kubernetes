@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: demo-cron-job
+  namespace: nginx
+
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: cron-job-pod
+          labels:
+            app: cron-job
+
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: cron-container
+              image: busybox:latest
+              command: [ "sh", "-c", "date; echo 'Hello from cron job'" ]
