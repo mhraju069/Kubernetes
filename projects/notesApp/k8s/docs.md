@@ -57,7 +57,7 @@ kubectl get services -n apps
 # Port Forwarding
 
 ```bash
-kubectl port-forward service/notes-app-service -n apps 8888:8000 --address=0.0.0.0
+kubectl port-forward service/notes-app-service -n apps 8888:8888 --address=0.0.0.0
 ```
 
 # Open the browser and go the url access the application
