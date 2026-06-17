@@ -4,6 +4,14 @@ let events = [];
 let holidays = [];
 let selectedEvent = null;
 
+// Helper for Ingress path-based routing
+function getApiUrl(endpoint) {
+    const match = window.location.pathname.match(/^\/(calendar|calender)/);
+    const prefix = match ? match[0] : '';
+    return `${prefix}/api/${endpoint}`;
+}
+
+
 // DOM Elements
 const currentMonthYearText = document.getElementById("currentMonthYear");
 const calendarGrid = document.getElementById("calendarGrid");
@@ -123,7 +131,7 @@ async function loadCalendarData() {
 
 async function loadEvents(startDate, endDate) {
     try {
-        let url = '/api/events';
+        let url = getApiUrl('events');
         if (startDate && endDate) {
             url += `?start_date=${startDate}&end_date=${endDate}`;
         }
@@ -141,7 +149,7 @@ async function loadEvents(startDate, endDate) {
 async function loadHolidays(year = currentDate.getFullYear()) {
     const country = countrySelect.value;
     try {
-        const response = await fetch(`/api/holidays?year=${year}&country=${country}`);
+        const response = await fetch(getApiUrl(`holidays?year=${year}&country=${country}`));
         if (response.ok) {
             holidays = await response.json();
         } else {
@@ -388,7 +396,7 @@ async function handleFormSubmit(e) {
         let response;
         if (eventId) {
             // Edit mode
-            response = await fetch(`/api/events/${eventId}`, {
+            response = await fetch(getApiUrl(`events/${eventId}`), {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -397,7 +405,7 @@ async function handleFormSubmit(e) {
             });
         } else {
             // Create mode
-            response = await fetch("/api/events", {
+            response = await fetch(getApiUrl("events"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -424,7 +432,7 @@ async function handleDeleteEvent() {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
     try {
-        const response = await fetch(`/api/events/${eventId}`, {
+        const response = await fetch(getApiUrl(`events/${eventId}`), {
             method: "DELETE"
         });
 
