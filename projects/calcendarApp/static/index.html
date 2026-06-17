@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Calendar</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <h1>Orbit<span>Cal</span></h1>
+            </div>
+
+            <button id="addEventBtn" class="btn btn-primary btn-block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Event
+            </button>
+
+            <div class="sidebar-section">
+                <h3>Settings</h3>
+                <div class="form-group">
+                    <label for="countrySelect">Holidays Country</label>
+                    <select id="countrySelect" class="form-control">
+                        <option value="US">United States (US)</option>
+                        <option value="BD" selected>Bangladesh (BD)</option>
+                        <option value="GB">United Kingdom (GB)</option>
+                        <option value="CA">Canada (CA)</option>
+                        <option value="AU">Australia (AU)</option>
+                        <option value="IN">India (IN)</option>
+                        <option value="DE">Germany (DE)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="sidebar-section flex-grow">
+                <h3>Upcoming Events</h3>
+                <div id="upcomingEventsList" class="upcoming-list">
+                    <!-- Dynamic List of Events -->
+                    <div class="no-events">No upcoming events this month</div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="legend">
+                    <span class="legend-item"><span class="dot dot-personal"></span>Personal</span>
+                    <span class="legend-item"><span class="dot dot-work"></span>Work</span>
+                    <span class="legend-item"><span class="dot dot-important"></span>Important</span>
+                    <span class="legend-item"><span class="dot dot-holiday"></span>Holiday</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Calendar Grid) -->
+        <main class="main-content">
+            <header class="calendar-header">
+                <div class="header-left">
+                    <h2 id="currentMonthYear">June 2026</h2>
+                    <div class="navigation-controls">
+                        <button id="prevMonthBtn" class="btn btn-icon" title="Previous Month">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button id="todayBtn" class="btn btn-secondary">Today</button>
+                        <button id="nextMonthBtn" class="btn btn-icon" title="Next Month">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="searchEvents" placeholder="Search events...">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Calendar Grid -->
+            <div class="calendar-grid-container">
+                <!-- Day Headers -->
+                <div class="day-headers">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <!-- Month Days Grid -->
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Event Modal (Create / Edit) -->
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="modalTitle">New Event</h2>
+                <button id="closeModalBtn" class="btn btn-icon-small">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </header>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <input type="hidden" id="eventId">
+                    
+                    <div class="form-group">
+                        <label for="eventTitle">Title *</label>
+                        <input type="text" id="eventTitle" class="form-control" placeholder="Add title..." required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="eventDate">Date *</label>
+                            <input type="date" id="eventDate" class="form-control" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="eventCategory">Category</label>
+                            <select id="eventCategory" class="form-control">
+                                <option value="personal">Personal</option>
+                                <option value="work">Work</option>
+                                <option value="important">Important</option>
+                                <option value="holiday">Holiday</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="eventStartTime">Start Time</label>
+                            <input type="time" id="eventStartTime" class="form-control">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="eventEndTime">End Time</label>
+                            <input type="time" id="eventEndTime" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventLocation">Location</label>
+                        <input type="text" id="eventLocation" class="form-control" placeholder="Add location...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" class="form-control" rows="3" placeholder="Add description..."></textarea>
+                    </div>
+
+                    <footer class="modal-footer">
+                        <button type="button" id="deleteEventBtn" class="btn btn-danger hidden">Delete</button>
+                        <div class="footer-right">
+                            <button type="button" id="cancelModalBtn" class="btn btn-secondary">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Event</button>
+                        </div>
+                    </footer>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>

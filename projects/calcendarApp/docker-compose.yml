@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  calendar:
+    build: .
+    container_name: orbit-calendar-app
+    ports:
+      - "8085:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
