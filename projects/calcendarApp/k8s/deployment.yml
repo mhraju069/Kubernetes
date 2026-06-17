@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: calendar-app-deployment
+  namespace: apps
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calendar-app
+
+  template:
+    metadata:
+      name: calendar-app-pod
+      labels:
+        app: calendar-app
+
+    spec:
+      containers:
+        - name: calendar-app-container
+          image: mhraju069/calendar-app-k8s:latest
+          ports:
+            - containerPort: 8000

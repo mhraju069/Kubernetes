@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: calendar-app-service
+  namespace: apps
+
+spec:
+  selector:
+    app: calendar-app
+
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8000
+
+  type: ClusterIP
