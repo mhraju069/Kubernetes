@@ -1,9 +1,20 @@
 # Create StatefullSet MySQL
 
 ## Create Namespace (Optional)
+```bash
+kubectl create namespace mysql
+```
+
+## Create Secret
 
 ```bash
-kubectl apply -f namespace.yml
+kubectl apply -f secreat.yml
+```
+
+## Create ConfigMap
+
+```bash
+kubectl apply -f config-map.yml
 ```
 
 ## Create StatefulSet
